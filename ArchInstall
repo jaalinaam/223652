@@ -1,0 +1,63 @@
+ls /sys/firmware/efi/efivars
+Check Ping
+#For wifi
+iwctl 
+station wlan0 connect "Aashiana 2-5G"
+timedatectl set-ntp true
+	
+Do partitioning on cfdisk or fdidk
+	mkfs.ext4 /dev/root_partition for main partition
+	mkfs.fat -F32 /dev/sdxY    --for boot efi
+	mkswap /dev/swap_partition
+	mount /dev/root_partition /mnt
+	mkdir /mnt/boot/efi
+	swapon /dev/swap_partition
+	mount /dev/efi /mnt/boot/efi
+	pacstrap /mnt base linux linux-firmware vim
+	genfstab -U /mnt >> /mnt/etc/fstab
+	
+#################
+arch-chroot /mnt
+ln -sf /usr/share/zoneinfo/Canada/Eastern /etc/localtime
+hwclock --systohc
+#Edit /etc/locale.gen and uncomment en_US.UTF-8 UTF-8 and other needed locales. Generate the locales by running:
+locale-gen
+echo "LANG=en_US.UTF-8" > /etc/locale.conf
+echo "arch" > /etc/hostname
+
+#/etc/hosts
+#127.0.0.1	localhost
+#::1		localhost
+#127.0.1.1	myhostname.localdomain	myhostname
+
+#################
+pacman -S grub efibootmgr networkmanager
+#network-manager-applet wireless_tools wpa_supplicant dialog os-prober mtools dosfstools base-devel linux headers git  pulseaudio-bluetooth cups ntfs-3g nvidia nvidia-utils
+==============================
+for Discover working 
+sudo pacman -S packagekit-qt5
+Discover NTFS install ntfs-3g 
+=====================
+Bluetooth: refine next time
+sudo pacman -S pipewire pipewire-pulse pipewire-alsa
+sudo systemctl start bluetooth.service
+sudo systemctl enable bluetooth.service
+#################
+Grub Install
+echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
+grub-install --target=x86_64-efi --efi-directory=/efi--bootloader-id=Arch
+grub-mkconfig -o /boot/grub/grub.cfg
+#################
+passwd
+new user
+useradd -mG wheel jn
+passwd jn
+visudo wheel group enable (uncomment wheel )
+systemctl enable NetworkManager
+pacman -S xorg plasma plasma-wayland-session kde-applications 
+systemctl enable sddm.service
+exit
+umount -a
+reboot
+
+
