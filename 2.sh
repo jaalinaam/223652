@@ -9,3 +9,13 @@ echo "arch" > /etc/hostname
 echo "GRUB_DISABLE_OS_PROBER=false" >> /etc/default/grub
 grub-install --target=x86_64-efi --efi-directory=/boot/efi --bootloader-id=Arch
 grub-mkconfig -o /boot/grub/grub.cfg
+systemctl enable NetworkManager
+systemctl enable sddm.service
+echo "passwd
+new user
+useradd -mG wheel jn
+passwd jn
+visudo wheel group enable (uncomment wheel )
+exit
+umount -a
+reboot"
